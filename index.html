@@ -1,115 +1,221 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SINator — Fireworks AI API Key Rotator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0a0a; color: #e5e5e5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
-  .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-  .hero { text-align: center; padding: 80px 0 40px; }
-  .hero h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #f97316, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .hero p { font-size: 1.2rem; color: #999; margin-top: 16px; max-width: 500px; margin-left: auto; margin-right: auto; }
-  .install-box { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 30px 0; }
-  .install-label { font-size: 0.85rem; color: #f97316; font-weight: 600; margin-bottom: 8px; }
-  code { display: block; background: #000; color: #22c55e; padding: 14px 18px; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
-  .btn { display: inline-block; background: #f97316; color: #fff; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 8px; border: none; cursor: pointer; font-size: 0.95rem; }
-  .btn:hover { background: #ea580c; }
-  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 40px 0; }
-  .card { background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 20px; }
-  .card h3 { font-size: 1.1rem; margin-bottom: 8px; }
-  .card p { font-size: 0.9rem; color: #999; }
-  .emoji { font-size: 1.5rem; margin-bottom: 8px; }
-  .footer { text-align: center; padding: 40px 0; color: #666; font-size: 0.85rem; }
-  .footer a { color: #f97316; text-decoration: none; }
-  .copied { color: #22c55e; font-size: 0.8rem; display: none; }
-  .copied.show { display: inline; }
-  .stats { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: oklch(0.145 0 0);
+    --bg-card: oklch(0.17 0 0);
+    --border: oklch(0.269 0 0);
+    --fg: oklch(0.985 0 0);
+    --fg-muted: oklch(0.556 0 0);
+    --fg-secondary: oklch(0.708 0 0);
+    --accent: #f97316;
+    --accent-pink: #ec4899;
+    --accent-bg: oklch(0.3 0.1 40);
+    --success: oklch(0.627 0.194 149.214);
+    --success-bg: oklch(0.3 0.1 150);
+    --radius: 0.625rem;
+    --font-sans: 'Geist', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
+  }
+
+  html { background: var(--bg); color: var(--fg); font-family: var(--font-sans); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  .header {
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in oklab, var(--bg-card) 50%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 40;
+  }
+  .header-inner { max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .header-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--fg); }
+  .header-logo-icon { width: 32px; height: 32px; border-radius: 8px; background: color-mix(in oklab, var(--accent) 15%, transparent); display: flex; align-items: center; justify-content: center; }
+  .header-logo-icon svg { width: 16px; height: 16px; }
+  .header-logo span { font-weight: 600; letter-spacing: -0.02em; }
+  .header-nav { display: flex; gap: 4px; }
+  .header-nav a { padding: 6px 12px; font-size: 0.875rem; border-radius: 6px; text-decoration: none; color: var(--fg-muted); transition: color 0.15s, background 0.15s; }
+  .header-nav a:hover { color: var(--fg); background: color-mix(in oklab, var(--border) 30%, transparent); }
+  .header-nav a.active { background: color-mix(in oklab, var(--border) 50%, transparent); color: var(--fg); }
+
+  .container { max-width: 880px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  .hero { text-align: center; padding: 80px 0 24px; }
+  .hero-icon { width: 64px; height: 64px; border-radius: 16px; background: color-mix(in oklab, var(--accent) 15%, transparent); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+  .hero-icon svg { width: 32px; height: 32px; }
+  .hero h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; background: linear-gradient(135deg, var(--accent), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero p { font-size: 1.125rem; color: var(--fg-secondary); margin-top: 16px; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+  .stats { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; margin: 32px 0; }
   .stat { text-align: center; }
-  .stat-num { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #f97316, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .stat-label { font-size: 0.8rem; color: #666; }
+  .stat-num { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .stat-label { font-size: 0.8rem; color: var(--fg-muted); margin-top: 2px; }
+
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .card-2 { background: var(--bg-card); border: 2px solid var(--border); border-radius: var(--radius); padding: 32px; text-align: center; }
+  .card-gradient { background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 8%, transparent), var(--bg-card)); border: 2px solid var(--border); border-radius: var(--radius); padding: 40px 32px; text-align: center; }
+
+  .install-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin: 48px 0; }
+  .install-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+  .install-code-wrapper { display: flex; flex-direction: column; gap: 8px; }
+  @media (min-width: 600px) { .install-code-wrapper { flex-direction: row; align-items: stretch; } }
+  code { display: block; background: var(--bg); color: oklch(0.8 0.1 150); padding: 14px 18px; border-radius: 8px; font-size: 0.82rem; font-family: var(--font-mono); overflow-x: auto; white-space: pre; word-break: break-all; flex: 1; border: 1px solid var(--border); }
+  code .prompt { color: var(--fg-muted); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; transition: background 0.15s; white-space: nowrap; font-family: var(--font-sans); }
+  .btn:hover { background: #ea580c; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--fg); }
+  .btn-outline:hover { background: color-mix(in oklab, var(--border) 30%, transparent); }
+  .btn-sm { padding: 8px 16px; font-size: 0.85rem; }
+  .copied { color: var(--success); font-size: 0.8rem; display: none; }
+  .copied.show { display: inline; }
+
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 48px 0; }
+  .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+  .card p { font-size: 0.85rem; color: var(--fg-secondary); line-height: 1.5; }
+
+  .steps { margin: 48px 0; }
+  .steps h2 { text-align: center; font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; }
+  .step-list { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .step-item { display: flex; align-items: center; gap: 12px; font-size: 0.875rem; }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: color-mix(in oklab, var(--border) 50%, transparent); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: var(--fg-secondary); flex-shrink: 0; }
+  .step-item.done .step-num { background: color-mix(in oklab, var(--success) 15%, transparent); color: var(--success); }
+
+  .footer { text-align: center; padding: 48px 0 24px; color: var(--fg-muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 48px; }
+  .footer a { color: var(--accent); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  .footer-nav { display: flex; gap: 16px; justify-content: center; margin-bottom: 12px; font-size: 0.85rem; }
+
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--accent); margin-bottom: 16px; }
+  @media (max-width: 600px) { .container { padding: 24px 16px 48px; } .hero { padding: 40px 0 16px; } .hero h1 { font-size: 1.75rem; } .features { grid-template-columns: 1fr; } .card-gradient { padding: 24px 16px; } }
 </style>
 </head>
 <body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="header-logo">
+      <div class="header-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"/><path d="m11 7-3 5h4l-3 5"/><line x1="22" x2="22" y1="11" y2="13"/></svg>
+      </div>
+      <span>SINator</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/" class="active">Dashboard</a>
+      <a href="https://github.com/SIN-Rotator/SINator-dashboard">GitHub</a>
+    </nav>
+  </div>
+</header>
+
 <div class="container">
-  
+
   <div class="hero">
-    <h1>SINator</h1>
-    <p>Unbegrenzt Fireworks AI API Keys. Vollautomatisch. Kostenlos.</p>
+    <div class="hero-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"/><path m="m11 7-3 5h4l-3 5"/><line x1="22" x2="22" y1="11" y2="13"/></svg>
+    </div>
+    <div class="badge">OpenCode Ready</div>
+    <h1>Unbegrenzt Fireworks AI Keys.</h1>
+    <p>Vollautomatisch. Lokal. Kostenlos. In ~180s pro Key.</p>
+
     <div class="stats">
-      <div class="stat"><div class="stat-num">~190s</div><div class="stat-label">pro Key</div></div>
-      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Automatisch</div></div>
+      <div class="stat"><div class="stat-num">~180s</div><div class="stat-label">pro Key</div></div>
+      <div class="stat"><div class="stat-num">112+</div><div class="stat-label">Keys generiert</div></div>
       <div class="stat"><div class="stat-num">0€</div><div class="stat-label">Kostenlos</div></div>
     </div>
   </div>
 
   <div class="install-box">
-    <div class="install-label">⚡ Installation — ein Befehl:</div>
-    <code id="installCmd">curl -fsSL https://raw.githubusercontent.com/SIN-Rotator/SINator-FireworksAI/main/tools/install.sh | bash</code>
-    <button class="btn" onclick="copyCmd()">📋 Kopieren</button>
-    <span class="copied" id="copiedMsg">✓ Kopiert!</span>
+    <div class="install-label">⚡ Installation</div>
+    <div class="install-code-wrapper">
+      <code id="installCmd"><span class="prompt">$</span> curl -fsSL https://raw.githubusercontent.com/SIN-Rotator/SINator-FireworksAI/main/tools/install.sh | bash</code>
+      <button class="btn" onclick="copyCmd()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Kopieren
+      </button>
+      <span class="copied" id="copiedMsg">✓ Kopiert!</span>
+    </div>
   </div>
 
   <div class="features">
     <div class="card">
-      <div class="emoji">🤖</div>
-      <h3>Vollautomatisch</h3>
-      <p>GMX Alias → Fireworks Account → OTP → API Key. Alles in einem Lauf ohne manuelle Eingriffe.</p>
+      <h3>🤖 Vollautomatisch</h3>
+      <p>GMX Alias → Fireworks Account → OTP → API Key. Alles in einem Lauf.</p>
     </div>
     <div class="card">
-      <div class="emoji">🔑</div>
-      <h3>API Key Pool</h3>
-      <p>Keys werden automatisch im Pool gespeichert. Dashboard zeigt alle Keys mit Status.</p>
+      <h3>🔑 API Key Pool</h3>
+      <p>Keys werden automatisch im Pool gespeichert. Dashboard mit Live-Status.</p>
     </div>
     <div class="card">
-      <div class="emoji">🔄</div>
-      <h3>Auto-Swap</h3>
-      <p>Rate-Limit erkannt? Ein Befehl tauscht den Key automatisch. Kein Session-Neustart.</p>
+      <h3>🔄 Auto-Swap</h3>
+      <p>Rate-Limit erkannt? Proxy tauscht den Key sofort. Kein Session-Neustart.</p>
     </div>
     <div class="card">
-      <div class="emoji">🌐</div>
-      <h3>Web-Dashboard</h3>
-      <p>Modernes Dashboard mit Key-Management, Rotation-Control und Live-Logs.</p>
+      <h3>🌐 Web-Dashboard</h3>
+      <p>Modernes Next.js Dashboard mit Key-Management und Rotation-Control.</p>
     </div>
     <div class="card">
-      <div class="emoji">🔒</div>
-      <h3>100% Lokal</h3>
-      <p>Alles läuft auf deiner Maschine. Passwörter verlassen nie deinen Rechner.</p>
+      <h3>🔒 100% Lokal</h3>
+      <p>Alles läuft auf deiner Maschine. Keys verlassen nie deinen Rechner.</p>
     </div>
     <div class="card">
-      <div class="emoji">🚀</div>
-      <h3>OpenCode Ready</h3>
-      <p>Nahtlose Integration mit OpenCode CLI. Auto-Swap bei Rate-Limits.</p>
+      <h3>🚀 OpenCode Ready</h3>
+      <p>Nahtlose Integration: <code style="display:inline;padding:1px 6px;font-size:0.75rem;">apiKey: "pool"</code></p>
     </div>
   </div>
 
-  <div style="text-align:center;margin:40px 0;">
-    <h2 style="margin-bottom:16px;">Wie es funktioniert</h2>
-    <code style="text-align:left;max-width:600px;margin:0 auto;">
-1. SINator erstellt GMX Email-Alias (z.B. storm-fox-123@gmx.de)
-2. Registriert neuen Fireworks AI Account mit dem Alias
-3. Liest OTP-Bestätigung automatisch aus GMX Postfach
-4. Loggt in Fireworks ein, füllt Onboarding aus
-5. Erstellt API Key → speichert in lokalen Pool
-6. Dashboard zeigt alle Keys, Status, Health
-    </code>
-  </div>
-
-  <div class="footer">
-    <p>
-      <a href="https://github.com/SIN-Rotator/SINator-FireworksAI">Backend</a> · 
-      <a href="https://github.com/SIN-Rotator/SINator-dashboard">Dashboard</a> · 
-      <a href="https://github.com/SIN-Rotator">GitHub Org</a>
+  <div class="card-gradient">
+    <h2 style="font-size:1.6rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:12px;">
+      Bereit für 112+ API Keys?
+    </h2>
+    <p style="color:var(--fg-secondary);margin-bottom:24px;max-width:420px;margin-left:auto;margin-right:auto;">
+      Ein Befehl im Terminal und SINator startet. Keine Konfiguration, keine API-Keys manuell sammeln.
     </p>
-    <p style="margin-top:8px;">macOS only · benötigt Chrome + Python 3.11+</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <a href="https://github.com/SIN-Rotator/SINator-FireworksAI" class="btn" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="https://github.com/SIN-Rotator/SINator-dashboard" class="btn btn-outline" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div class="steps">
+    <h2>Wie es funktioniert</h2>
+    <div class="step-list">
+      <div class="step-item done"><span class="step-num">1</span> GMX Email-Alias erstellen (z.B. <code style="display:inline;padding:1px 6px;font-size:0.8rem;">storm-fox-123@gmx.de</code>)</div>
+      <div class="step-item done"><span class="step-num">2</span> Neuen Fireworks AI Account mit dem Alias registrieren</div>
+      <div class="step-item done"><span class="step-num">3</span> OTP-Bestätigung automatisch aus GMX Postfach lesen</div>
+      <div class="step-item done"><span class="step-num">4</span> In Fireworks einloggen, Onboarding ausfüllen</div>
+      <div class="step-item done"><span class="step-num">5</span> API Key generieren → im lokalen Pool speichern</div>
+      <div class="step-item done"><span class="step-num">6</span> Dashboard zeigt alle Keys, Pool-Status, Live-Logs</div>
+    </div>
   </div>
 
 </div>
 
+<footer class="footer">
+  <div class="footer-nav">
+    <a href="https://github.com/SIN-Rotator/SINator-FireworksAI">Backend</a>
+    <a href="https://github.com/SIN-Rotator/SINator-dashboard">Dashboard</a>
+    <a href="https://github.com/SIN-Rotator">GitHub Org</a>
+  </div>
+  <p>macOS only · benötigt Chrome + Python 3.11+</p>
+  <p style="margin-top:4px;">SINator — Fireworks AI API Key Rotator</p>
+</footer>
+
 <script>
 function copyCmd() {
-  const cmd = document.getElementById('installCmd').textContent;
+  const cmd = document.getElementById('installCmd').textContent.replace('$ ', '').trim();
   navigator.clipboard.writeText(cmd).then(() => {
     const msg = document.getElementById('copiedMsg');
     msg.classList.add('show');
