@@ -94,6 +94,12 @@
   .footer-nav { display: flex; gap: 16px; justify-content: center; margin-bottom: 12px; font-size: 0.85rem; }
 
   .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--accent); margin-bottom: 16px; }
+
+  .section-header { text-align: center; margin: 64px 0 24px; }
+  .section-header h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+  .section-sub { color: var(--fg-secondary); font-size: 0.9rem; margin-top: 6px; }
+
+  @media (max-width: 700px) { .card-gradient > div { grid-template-columns: 1fr !important; } }
   @media (max-width: 600px) { .container { padding: 24px 16px 48px; } .hero { padding: 40px 0 16px; } .hero h1 { font-size: 1.75rem; } .features { grid-template-columns: 1fr; } .card-gradient { padding: 24px 16px; } }
 </style>
 </head>
@@ -108,7 +114,9 @@
       <span>SINator</span>
     </a>
     <nav class="header-nav">
-      <a href="/" class="active">Dashboard</a>
+      <a href="/" class="active">Übersicht</a>
+      <a href="#download">Download</a>
+      <a href="#pool">Pool</a>
       <a href="https://github.com/SIN-Rotator/SINator-dashboard">GitHub</a>
     </nav>
   </div>
@@ -170,22 +178,119 @@
     </div>
   </div>
 
-  <div class="card-gradient">
-    <h2 style="font-size:1.6rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:12px;">
-      Bereit für 112+ API Keys?
-    </h2>
-    <p style="color:var(--fg-secondary);margin-bottom:24px;max-width:420px;margin-left:auto;margin-right:auto;">
-      Ein Befehl im Terminal und SINator startet. Keine Konfiguration, keine API-Keys manuell sammeln.
+  <!-- OPTION 1: POOL ACCESS -->
+  <div class="section-header" id="pool">
+    <div class="badge">☁️ Remote</div>
+    <h2>Pool Access — Keys aus der Cloud</h2>
+    <p class="section-sub">Keine Installation. Einfach die API-URL umbiegen.</p>
+  </div>
+
+  <div class="card-2">
+    <p style="margin-bottom:20px;color:var(--fg-secondary);font-size:0.9rem;">
+      Unser Pool-Proxy läuft auf <strong style="color:var(--fg);">sinator.delqhi.com</strong>.
+      Er leitet Anfragen an die Fireworks API weiter und tauscht den Key <strong>automatisch</strong>
+      aus, sobald Rate-Limiting oder ein Spending-Limit erreicht wird. Kein manuelles Key-Rotieren.
     </p>
-    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-      <a href="https://github.com/SIN-Rotator/SINator-FireworksAI" class="btn" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </a>
-      <a href="https://github.com/SIN-Rotator/SINator-dashboard" class="btn btn-outline" target="_blank">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Dashboard
-      </a>
+    <div style="margin-bottom:16px;">
+      <div class="install-label">🔧 Konfiguration (OpenCode / OpenAI-Client)</div>
+      <div class="install-code-wrapper">
+        <code><span class="prompt">$</span> opencode config set baseURL https://sinator.delqhi.com/inference/v1</code>
+        <button class="btn btn-sm" onclick="copyText('baseurl')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+        <span class="copied" id="copiedBaseurl">✓ Kopiert!</span>
+      </div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div class="install-label">🔑 API Key (Auth-Token)</div>
+      <div class="install-code-wrapper">
+        <code><span class="prompt">$</span> opencode config set apiKey 7avN1KkfInNqcOMn2CtwLTvx</code>
+        <button class="btn btn-sm" onclick="copyText('pooltoken')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+        <span class="copied" id="copiedPooltoken">✓ Kopiert!</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <span style="font-size:0.8rem;color:var(--fg-muted);display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Auto-Swap bei Rate-Limit
+      </span>
+      <span style="font-size:0.8rem;color:var(--fg-muted);display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+        64 Keys verfügbar
+      </span>
+      <span style="font-size:0.8rem;color:var(--fg-muted);display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        OpenAI-kompatibel
+      </span>
+    </div>
+  </div>
+
+  <div class="features" style="margin-top:0;">
+    <div class="card">
+      <h3>🔄 Auto-Swap</h3>
+      <p>Fireworks meldet 429/402/403? Der Proxy tauscht sofort auf den nächsten Key. Du merkst nichts.</p>
+    </div>
+    <div class="card">
+      <h3>🔌 Drop-In</h3>
+      <p>Kompatibel mit jedem OpenAI-Client. Einfach <code style="display:inline;padding:1px 6px;font-size:0.75rem;">baseURL</code> und <code style="display:inline;padding:1px 6px;font-size:0.75rem;">apiKey</code> konfigurieren.</p>
+    </div>
+    <div class="card">
+      <h3>📊 Live-Dashboard</h3>
+      <p>Pool-Status, aktiver Key, verbrauchte Keys — alles einsehbar unter <a href="https://sinator.delqhi.com" style="color:var(--accent);">sinator.delqhi.com</a>.</p>
+    </div>
+  </div>
+
+  <!-- OPTION 2: DOWNLOAD -->
+  <div class="section-header" id="download">
+    <div class="badge">💻 Lokal</div>
+    <h2>Download — SINator selbst hosten</h2>
+    <p class="section-sub">Lass die Rotation auf deinem eigenen Mac laufen. Volle Kontrolle.</p>
+  </div>
+
+  <div class="card-gradient" style="margin-bottom:0;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;text-align:left;">
+      <div>
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">🐚 Terminal (empfohlen)</h3>
+        <p style="color:var(--fg-secondary);font-size:0.85rem;margin-bottom:16px;">
+          Python-Skript, das alles automatisiert: GMX Login → Alias Rotation → Fireworks Signup → API Key.
+          Ein Befehl, ~180s, fertig.
+        </p>
+        <ul style="list-style:none;font-size:0.85rem;color:var(--fg-secondary);margin-bottom:20px;">
+          <li style="padding:4px 0;">✅ GMX Alias + Fireworks Account</li>
+          <li style="padding:4px 0;">✅ OTP-Verifikation automatisch</li>
+          <li style="padding:4px 0;">✅ Key landet direkt im Pool</li>
+          <li style="padding:4px 0;">✅ macOS + Chrome + Python 3.11+</li>
+        </ul>
+        <a href="https://github.com/SIN-Rotator/SINator-FireworksAI" class="btn" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          Backend (GitHub)
+        </a>
+      </div>
+      <div>
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">🖥️ Tauri App (macOS)</h3>
+        <p style="color:var(--fg-secondary);font-size:0.85rem;margin-bottom:16px;">
+          Native macOS App mit Dashboard, Key-Management und Rotation-Control.
+          ~4 MB, kein Electron, kein Browser-Tab nötig.
+        </p>
+        <ul style="list-style:none;font-size:0.85rem;color:var(--fg-secondary);margin-bottom:20px;">
+          <li style="padding:4px 0;">✅ Pool-Übersicht + Live-Status</li>
+          <li style="padding:4px 0;">✅ Manuelle Rotation starten</li>
+          <li style="padding:4px 0;">✅ Key-Kopieren per Klick</li>
+          <li style="padding:4px 0;">✅ macOS 14+ (Apple Silicon)</li>
+        </ul>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="https://github.com/SIN-Rotator/SINator-dashboard/releases" class="btn" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            DMG Download
+          </a>
+          <a href="https://github.com/SIN-Rotator/SINator-dashboard" class="btn btn-outline" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -205,6 +310,8 @@
 
 <footer class="footer">
   <div class="footer-nav">
+    <a href="#pool">Pool Access</a>
+    <a href="#download">Download</a>
     <a href="https://github.com/SIN-Rotator/SINator-FireworksAI">Backend</a>
     <a href="https://github.com/SIN-Rotator/SINator-dashboard">Dashboard</a>
     <a href="https://github.com/SIN-Rotator">GitHub Org</a>
@@ -220,6 +327,16 @@ function copyCmd() {
     const msg = document.getElementById('copiedMsg');
     msg.classList.add('show');
     setTimeout(() => msg.classList.remove('show'), 2000);
+  });
+}
+function copyText(id) {
+  const texts = {
+    baseurl: 'opencode config set baseURL https://sinator.delqhi.com/inference/v1',
+    pooltoken: 'opencode config set apiKey 7avN1KkfInNqcOMn2CtwLTvx',
+  };
+  navigator.clipboard.writeText(texts[id]).then(() => {
+    const msg = document.getElementById('copied' + id.charAt(0).toUpperCase() + id.slice(1));
+    if (msg) { msg.classList.add('show'); setTimeout(() => msg.classList.remove('show'), 2000); }
   });
 }
 </script>
