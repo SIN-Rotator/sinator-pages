@@ -70,6 +70,29 @@
   .pool-features { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
   .pool-features span { font-size: 0.78rem; color: var(--fg-muted); display: inline-flex; align-items: center; gap: 4px; }
 
+  .pool-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+  .pool-stat { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 6px; text-align: center; }
+  .pool-stat-num { font-size: 1.4rem; font-weight: 800; font-family: var(--font-sans); }
+  .pool-stat-num.green { color: var(--success); }
+  .pool-stat-num.muted { color: var(--fg-muted); }
+  .pool-stat-num.orange { color: var(--accent); }
+  .pool-stat-label { font-size: 0.65rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+
+  .pool-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer; width: 100%; justify-content: center; transition: background 0.15s; font-family: var(--font-sans); margin-top: 12px; }
+  .pool-btn:hover { background: #ea580c; }
+  .pool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .key-result { margin-top: 12px; background: var(--bg); border: 2px solid var(--success); border-radius: 8px; padding: 14px; display: none; }
+  .key-result.show { display: block; }
+  .key-result-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--success); font-weight: 600; margin-bottom: 6px; }
+  .key-result-text { font-family: var(--font-mono); font-size: 0.78rem; word-break: break-all; }
+
+  .pool-error { margin-top: 12px; color: #ef4444; font-size: 0.85rem; display: none; }
+  .pool-error.show { display: block; }
+
+  .loading-spinner { display: inline-block; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   .footer { text-align: center; padding: 40px 0 24px; color: var(--fg-muted); font-size: 0.8rem; }
   .footer a { color: var(--accent); text-decoration: none; }
   .footer a:hover { text-decoration: underline; }
@@ -128,12 +151,31 @@
     <h2>Für Entwickler: Pool-Zugriff</h2>
     <div class="pool-card">
       <p>Unser gemeinsamer Key-Pool. Bei Rate-Limit wird automatisch gewechselt.</p>
+
+       <div class="pool-stats">
+         <div class="pool-stat"><div class="pool-stat-num orange" id="totalKeys">-</div><div class="pool-stat-label">Gesamt</div></div>
+         <div class="pool-stat"><div class="pool-stat-num green" id="availKeys">-</div><div class="pool-stat-label">Verfügbar</div></div>
+         <div class="pool-stat"><div class="pool-stat-num muted" id="deadKeys">-</div><div class="pool-stat-label">Verbraucht</div></div>
+       </div>
+
       <code><span class="comment"># OpenAI-kompatibler Endpunkt</span>
 baseURL: https://sinator.delqhi.com/inference/v1
 apiKey: 7avN1KkfInNqcOMn2CtwLTvx</code>
+
+      <button class="pool-btn" id="getKeyBtn" onclick="leaseKey()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        API Key holen
+      </button>
+
+      <div class="key-result" id="keyResult">
+        <div class="key-result-label">Dein API Key</div>
+        <div class="key-result-text" id="keyText"></div>
+      </div>
+      <div class="pool-error" id="poolError"></div>
+
       <div class="pool-features">
         <span>🔄 Auto-Swap bei Rate-Limit</span>
-        <span>🔑 112 Keys insgesamt</span>
+        <span id="poolCount">🔑 ... Keys</span>
         <span>🔌 OpenAI-kompatibel</span>
       </div>
     </div>
@@ -144,6 +186,55 @@ apiKey: 7avN1KkfInNqcOMn2CtwLTvx</code>
 <footer class="footer">
   <a href="https://github.com/SIN-Rotator/SINator-FireworksAI">SINator</a> · <a href="https://github.com/SIN-Rotator">GitHub</a>
 </footer>
+
+<script>
+const POOL_URL = "https://sinator.delqhi.com"
+const AUTH_TOKEN = "7avN1KkfInNqcOMn2CtwLTvx"
+
+async function api(path) {
+  const r = await fetch(POOL_URL + path, { headers: { "Authorization": "Bearer " + AUTH_TOKEN } })
+  if (!r.ok) throw new Error(await r.text().catch(() => r.statusText))
+  return r.json()
+}
+
+async function refreshStatus() {
+  try {
+    const s = await api("/pool-status")
+    const pool = s.pool || {}
+    document.getElementById("totalKeys").textContent = pool.total ?? "-"
+    document.getElementById("availKeys").textContent = pool.available ?? "-"
+    document.getElementById("deadKeys").textContent = (pool.used ?? 0) + (pool.suspended ?? 0)
+    document.getElementById("poolCount").textContent = "🔑 " + (pool.total || "?") + " Keys insgesamt"
+  } catch (e) {
+    document.getElementById("poolCount").textContent = "🔑 Pool nicht erreichbar"
+  }
+}
+
+async function leaseKey() {
+  const btn = document.getElementById("getKeyBtn")
+  const kr = document.getElementById("keyResult")
+  const pe = document.getElementById("poolError")
+  kr.classList.remove("show")
+  pe.classList.remove("show")
+  btn.disabled = true
+  btn.textContent = "Key wird geholt…"
+  try {
+    const data = await api("/pool-lease")
+    document.getElementById("keyText").textContent = data.api_key
+    kr.classList.add("show")
+    btn.textContent = "Noch einen holen"
+    refreshStatus()
+  } catch (e) {
+    pe.textContent = e.message || "Fehler beim Holen des Keys"
+    pe.classList.add("show")
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Erneut versuchen'
+  }
+  btn.disabled = false
+}
+
+refreshStatus()
+setInterval(refreshStatus, 15000)
+</script>
 
 </body>
 </html>
