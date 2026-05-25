@@ -345,18 +345,49 @@
         <summary>opencode / Cursor / Continue / Python SDK einrichten</summary>
         <div class="setup-content">
 
-        <h4>opencode</h4>
-        <p>In <code>~/.config/opencode/opencode.json</code> unter <code>provider.fireworks-ai.options</code>:</p>
-        <div class="code-box">
-          <span class="cmt">&quot;options&quot;</span>: {<br>
-          &nbsp;&nbsp;<span class="var">&quot;baseURL&quot;</span>: <span class="str">&quot;https://sinator.delqhi.com/inference/v1&quot;</span><br>
-          }
+        <h4>opencode — fertige Konfiguration</h4>
+        <p>Erstelle <code>~/.config/opencode/opencode.json</code> mit diesem kompletten Inhalt:</p>
+        <div class="code-box" style="max-height:380px;overflow-y:auto">
+{
+  <span class="key">"provider"</span>: {
+    <span class="key">"fireworks-ai"</span>: {
+      <span class="key">"npm"</span>: <span class="str">"@ai-sdk/fireworks"</span>,
+      <span class="key">"name"</span>: <span class="str">"Fireworks AI (SINator)"</span>,
+      <span class="key">"options"</span>: {
+        <span class="key">"baseURL"</span>: <span class="str">"https://sinator.delqhi.com/inference/v1"</span>
+      },
+      <span class="key">"models"</span>: {
+        <span class="key">"deepseek-v4-pro"</span>: {
+          <span class="key">"id"</span>: <span class="str">"fireworks/deepseek-v4-pro"</span>,
+          <span class="key">"name"</span>: <span class="str">"DeepSeek V4 Pro"</span>,
+          <span class="key">"options"</span>: { <span class="key">"thinking"</span>: { <span class="key">"type"</span>: <span class="str">"enabled"</span>, <span class="key">"budgetTokens"</span>: 64000 } },
+          <span class="key">"limit"</span>: { <span class="key">"context"</span>: 1048576, <span class="key">"output"</span>: 65536 }
+        },
+        <span class="key">"glm-5p1"</span>: {
+          <span class="key">"id"</span>: <span class="str">"fireworks/glm-5p1"</span>,
+          <span class="key">"name"</span>: <span class="str">"GLM 5.1"</span>,
+          <span class="key">"options"</span>: { <span class="key">"thinking"</span>: { <span class="key">"type"</span>: <span class="str">"enabled"</span>, <span class="key">"budgetTokens"</span>: 32000 } },
+          <span class="key">"limit"</span>: { <span class="key">"context"</span>: 202752, <span class="key">"output"</span>: 32768 }
+        },
+        <span class="key">"kimi-k2p6"</span>: {
+          <span class="key">"id"</span>: <span class="str">"fireworks/kimi-k2p6"</span>,
+          <span class="key">"name"</span>: <span class="str">"Kimi K2.6"</span>,
+          <span class="key">"options"</span>: { <span class="key">"thinking"</span>: { <span class="key">"type"</span>: <span class="str">"enabled"</span>, <span class="key">"budgetTokens"</span>: 32000 } },
+          <span class="key">"limit"</span>: { <span class="key">"context"</span>: 262144, <span class="key">"output"</span>: 32768 }
+        }
+      }
+    }
+  },
+  <span class="key">"agent"</span>: {
+    <span class="key">"SIN-Zeus"</span>: { <span class="key">"model"</span>: <span class="str">"fireworks-ai/deepseek-v4-pro"</span> }
+  }
+}
         </div>
-        <p>Dann in <code>~/.zshrc</code> (oder <code>~/.bashrc</code>):</p>
+        <p>Dann API-Key in <code>~/.zshrc</code>:</p>
         <div class="code-box">
           <span class="key">export</span> <span class="var">FIREWORKS_API_KEY</span>=<span class="str">&quot;7avN1KkfInNqcOMn2CtwLTvx&quot;</span>
         </div>
-        <p style="font-size:12px;color:var(--fg3)">Das <code>@ai-sdk/fireworks</code> SDK liest <code>FIREWORKS_API_KEY</code> automatisch als <code>Authorization: Bearer</code>.</p>
+        <p style="font-size:12px;color:var(--fg3)">Danach Terminal neu starten oder <code>source ~/.zshrc</code>. Bei bestehender Config nur den <code>fireworks-ai</code> Block in <code>"provider"</code> einfügen.</p>
 
         <h4>Cursor</h4>
         <p>Settings → Models → Neuen Provider:</p>
