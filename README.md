@@ -1,6 +1,6 @@
 # SINator Pages
 
-[![graphify](https://img.shields.io/badge/graphify-knowledge%20graph-8A2BE2)](graphify-out/graph.json)
+[![GitNexus](https://img.shields.io/badge/GitNexus-knowledge%20graph-8B5CF6)](.gitnexus/)
 
 Public Landing Page für den SINator Fireworks AI Key Pool. Reines Static HTML — kein Build, keine Dependencies.
 

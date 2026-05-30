@@ -1,6 +1,5 @@
-# OS
-.DS_Store
-Thumbs.db
-
-# Graphify (auto-generated)
-graphify-out/
+1:1:# OS
+2:2:.DS_Store
+3:3:Thumbs.db
+4:4:
+6:7:.gitnexus
